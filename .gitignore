@@ -1,0 +1,59 @@
+# .gitignore
+
+# ===== СЕКРЕТЫ =====
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+secrets/
+
+!.env.example
+!.env.*.example
+
+# ===== IDE =====
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+docker-compose.override.yml
+
+# ===== LARAVEL =====
+backend-laravel/vendor/
+backend-laravel/node_modules/
+backend-laravel/.env
+backend-laravel/storage/*.key
+backend-laravel/storage/logs/*
+!backend-laravel/storage/logs/.gitkeep
+backend-laravel/bootstrap/cache/*
+!backend-laravel/bootstrap/cache/.gitkeep
+backend-laravel/public/hot
+backend-laravel/public/storage
+backend-laravel/.phpunit.result.cache
+backend-laravel/.php-cs-fixer.cache
+
+# ===== GO =====
+backend-go/tmp/
+backend-go/*.exe
+backend-go/*.exe~
+backend-go/*.dll
+backend-go/*.so
+backend-go/*.dylib
+backend-go/*.test
+backend-go/*.out
+backend-go/coverage.html
+
+# ===== VUE/NODE =====
+frontend-vue/node_modules/
+frontend-vue/dist/
+frontend-vue/.env.local
+frontend-vue/*.local
+frontend-vue/coverage/
+frontend-vue/.nyc_output/
+
+# ===== LOGS =====
+*.log
+logs/

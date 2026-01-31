@@ -1,0 +1,162 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ${COMPOSE_PROJECT_NAME}_postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - ${COMPOSE_PROJECT_NAME}_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: ${COMPOSE_PROJECT_NAME}_redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    command: >
+      redis-server
+      --appendonly yes
+      --requirepass ${REDIS_PASSWORD}
+    networks:
+      - ${COMPOSE_PROJECT_NAME}_network
+
+  laravel:
+    build:
+      context: ./backend-laravel
+      dockerfile: Dockerfile
+      args:
+        - PHP_VERSION=${PHP_VERSION}
+        - ENVIRONMENT=${ENVIRONMENT}
+    container_name: ${COMPOSE_PROJECT_NAME}_api
+    ports:
+      - "8085:8000"
+    volumes:
+      - ./backend-laravel:/var/www/html
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8085/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - ${COMPOSE_PROJECT_NAME}_network
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      APP_NAME: "Cultivation Game API"
+      APP_ENV: ${ENVIRONMENT}
+      APP_DEBUG: ${APP_DEBUG:-false}
+      APP_URL: ${APP_URL}
+      
+      DB_CONNECTION: pgsql
+      DB_HOST: ${POSTGRES_HOST}
+      DB_PORT: ${POSTGRES_PORT}
+      DB_DATABASE: ${POSTGRES_DB}
+      DB_USERNAME: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      
+      CACHE_DRIVER: redis
+      SESSION_DRIVER: redis
+      QUEUE_CONNECTION: redis
+      
+      SANCTUM_STATEFUL_DOMAINS: ${SANCTUM_STATEFUL_DOMAINS}
+
+  gameserver:
+    build:
+      context: ./backend-go
+      dockerfile: Dockerfile
+    container_name: ${COMPOSE_PROJECT_NAME}_game
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT}
+      
+      REDIS_URL: redis://:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}/1
+      
+      LARAVEL_GRPC_HOST: laravel
+      LARAVEL_GRPC_PORT: 9000
+      
+      JWT_SECRET: ${JWT_SECRET}
+      
+      WS_PORT: 8080
+      GRPC_PORT: 9090
+    ports:
+      - "${GAME_SERVER_PORT:-8080}:8080"    # WebSocket
+      - "${GRPC_PORT:-9090}:9090"           # gRPC
+    networks:
+      - ${COMPOSE_PROJECT_NAME}_network
+    depends_on:
+      - postgres
+      - redis
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend-vue
+      dockerfile: Dockerfile
+    container_name: ${COMPOSE_PROJECT_NAME}_web
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend-vue:/app
+    depends_on:
+      - laravel
+      - gameserver
+    environment:
+      VITE_API_URL: ${VITE_API_URL}
+      VITE_WS_URL: ${VITE_WS_URL}
+    networks:
+      - ${COMPOSE_PROJECT_NAME}_network
+  
+  adminer:
+    image: adminer:4
+    container_name: ${COMPOSE_PROJECT_NAME}_adminer
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    depends_on:
+      - postgres
+    networks:
+      - ${COMPOSE_PROJECT_NAME}_network
+    profiles:
+      - tools
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: ${COMPOSE_PROJECT_NAME}_redis_ui
+    restart: unless-stopped
+    environment:
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    ports:
+      - "8082:8081"
+    depends_on:
+      - redis
+    networks:
+      - ${COMPOSE_PROJECT_NAME}_network
+    profiles:
+      - tools
+
+networks:
+  cultivation_network:
+    driver: bridge
+    name: ${COMPOSE_PROJECT_NAME}_network
+
+volumes:
+  postgres_data:
+  redis_data:
