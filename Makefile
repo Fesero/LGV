@@ -3,11 +3,11 @@
 # Переменные
 COMPOSE = docker-compose
 COMPOSE_FILE = docker-compose.yml
-EXEC_PHP = $(COMPOSE) exec laravel
-EXEC_GO = $(COMPOSE) exec gameserver
-EXEC_NODE = $(COMPOSE) exec frontend
-EXEC_DB = $(COMPOSE) exec postgres
-EXEC_REDIS = $(COMPOSE) exec redis
+EXEC_PHP = $(COMPOSE) exec --user 1000:1000 laravel
+EXEC_GO = $(COMPOSE) exec --user 1000:1000 gameserver
+EXEC_NODE = $(COMPOSE) exec --user 1000:1000 frontend
+EXEC_DB = $(COMPOSE) exec --user 1000:1000 postgres
+EXEC_REDIS = $(COMPOSE) exec --user 1000:1000 redis
 
 # Цвета для вывода
 GREEN = \033[0;32m
