@@ -2,31 +2,33 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use App\DTO\Auth\RegisterDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Services\Auth\AuthService;
-use App\DTO\Auth\RegisterDTO;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
 {
     public function __construct(
-        protected AuthService $registrationService
+        protected AuthService $authService
     ) {}
 
     public function __invoke(RegisterRequest $request): JsonResponse
     {
         $dto = RegisterDTO::fromRequest($request->validated());
 
-        $user = $this->registrationService->register($dto);
+        $user = $this->authService->register($dto);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        Auth::login($user);
+
+        event(new Registered($user));
 
         return response()->json([
-            'user'  => new UserResource($user),
-            'token' => $token,
-            'type'  => 'Bearer'
+            'user' => new UserResource($user->load('character')),
         ], 201);
     }
 }

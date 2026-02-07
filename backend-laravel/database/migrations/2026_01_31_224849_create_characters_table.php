@@ -14,22 +14,22 @@ return new class extends Migration
         Schema::create('characters', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            
+
             $table->string('nickname')->unique();
             $table->integer('level')->default(1);
             $table->bigInteger('exp')->default(0);
-            
-            $table->tinyInteger('cultivation_realm')->default(1); 
+
+            $table->tinyInteger('cultivation_realm')->default(1);
             $table->bigInteger('current_qi')->default(0);
             $table->bigInteger('max_qi')->default(100);
-            
+
             $table->integer('strength')->default(5); // Физ. атака
             $table->integer('agility')->default(5);  // Скорость/Уворот
             $table->integer('vitality')->default(5); // HP
             $table->integer('spirit')->default(5);   // Маг. атака
-            
+
             $table->integer('location_id')->default(1)->index();
-            
+
             $table->timestamps();
         });
     }

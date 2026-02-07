@@ -1,16 +1,17 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\LoginController;
-use App\Http\Resources\UserResource;
+use App\Http\Controllers\Api\Auth\MeController;
+use App\Http\Controllers\Api\Auth\RegisterController;
+use Illuminate\Support\Facades\Route;
 
-Route::post('/register', RegisterController::class);
-Route::post('/login', LoginController::class);
+Route::post('/register', RegisterController::class)->middleware('throttle:5,1');
+Route::post('/login', LoginController::class)->middleware('throttle:5,1');
 
-Route::middleware('auth:sanctum')->group(function(): void {
-    Route::get('/me', function(Request $request): UserResource {
-        return new UserResource($request->user()->load('character'));
-    });
+Route::middleware('auth:sanctum')->group(function (): void {
+    Route::get('/me', MeController::class);
+});
+
+Route::get('/sanctum/csrf-cookie', function () {
+    return response()->noContent();
 });

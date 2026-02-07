@@ -268,7 +268,7 @@ lint: ## Запустить все линтеры
 	@echo "$(YELLOW)PHP...$(NC)"
 	$(EXEC_PHP) ./vendor/bin/pint --test
 	@echo "$(YELLOW)PHPStan...$(NC)"
-	$(EXEC_PHP) ./vendor/bin/phpstan analyse
+	$(EXEC_PHP) memory_limit=1G ./vendor/bin/phpstan analyse
 	@echo "$(YELLOW)Go...$(NC)"
 	$(EXEC_GO) golangci-lint run
 	@echo "$(YELLOW)Vue/TS...$(NC)"

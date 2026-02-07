@@ -2,10 +2,9 @@
 
 namespace Tests\Feature\Auth;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class AuthTest extends TestCase
 {
@@ -17,7 +16,7 @@ class AuthTest extends TestCase
     public function test_register(): void
     {
         $this->withoutExceptionHandling();
-        
+
         $response = $this->postJson('/api/register', [
             'name' => 'Ivan',
             'email' => 'ivan@cultivation.world',
@@ -31,7 +30,7 @@ class AuthTest extends TestCase
         $this->assertDatabaseHas('users', ['email' => 'ivan@cultivation.world']);
         $this->assertDatabaseHas('characters', ['nickname' => 'DragonSlayer']);
 
-        $this->assertArrayHasKey('token', $response->json());
+        $this->assertArrayHasKey('user', $response->json());
     }
 
     public function test_login(): void
@@ -43,22 +42,22 @@ class AuthTest extends TestCase
             'email' => 'test@sect.com',
             'password' => bcrypt($password),
         ]);
-        
+
         $user->character()->create(['nickname' => 'ElderTest', 'level' => 99]);
-        
+
         $response = $this->postJson('/api/login', [
             'email' => 'test@sect.com',
             'password' => $password,
         ]);
 
         $response->assertStatus(200)
-                 ->assertJsonStructure(['token', 'user']);
+            ->assertJsonStructure(['user']);
     }
 
     public function test_cannot_login_with_wrong_pass(): void
     {
         $user = User::factory()->create(['password' => bcrypt('Correct')]);
-        
+
         $response = $this->postJson('/api/login', [
             'email' => $user->email,
             'password' => 'Wrong!',
