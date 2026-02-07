@@ -1,0 +1,43 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+
+parameters:
+    # Максимальный уровень строгости (0-9, где 9 - самый строгий)
+    # Level 8 - сеньор-стандарт: проверяет всё кроме совсем экстремальных случаев
+    level: 8
+
+    # Директории для анализа
+    paths:
+        - app
+        - config
+        - database
+        - routes
+        - tests
+
+    # Игнорируем автогенерируемые файлы
+    excludePaths:
+        - bootstrap/cache
+        - storage
+        - vendor
+
+    # Разрешаем динамическую магию Laravel (Eloquent, Facades)
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+
+    # Игнорируем устаревшие правила для Laravel 12
+    reportUnmatchedIgnoredErrors: false
+
+    # Включаем проверку неиспользуемых приватных свойств/методов
+    checkUninitializedProperties: true
+    checkMissingCallableSignature: true
+
+    # Строгая проверка return types
+    checkAlwaysTrueCheckTypeFunctionCall: true
+    checkAlwaysTrueInstanceof: true
+    checkAlwaysTrueStrictComparison: true
+
+    # Улучшенная обработка mixed типов
+    checkExplicitMixed: true
+
+    # Проверка nullable
+    checkImplicitMixed: true
