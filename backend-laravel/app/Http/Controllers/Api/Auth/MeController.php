@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
-use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class MeController extends Controller
 {
