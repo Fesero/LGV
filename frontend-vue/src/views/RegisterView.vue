@@ -283,7 +283,7 @@ async function handleRegister() {
   </div>
 </template>
 
-<style scoped>
+<style>
 * {
   margin: 0;
   padding: 0;
