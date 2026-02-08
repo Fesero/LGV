@@ -27,4 +27,6 @@ RUN addgroup -g $GID laravel && \
 
 WORKDIR /var/www/html
 
+COPY --chown=laravel:laravel . .
+
 USER laravel
