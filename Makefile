@@ -266,9 +266,9 @@ test-web: ## Тесты Vue
 .PHONY: lint
 lint: ## Запустить все линтеры
 	@echo "$(YELLOW)PHP...$(NC)"
-	$(EXEC_PHP) ./vendor/bin/pint --test
+	$(EXEC_PHP) ./vendor/bin/pint
 	@echo "$(YELLOW)PHPStan...$(NC)"
-	$(EXEC_PHP) ./vendor/bin/phpstan analyse
+	$(EXEC_PHP) ./vendor/bin/phpstan analyse --memory-limit=1G
 	@echo "$(YELLOW)Go...$(NC)"
 	$(EXEC_GO) golangci-lint run
 	@echo "$(YELLOW)Vue/TS...$(NC)"

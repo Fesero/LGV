@@ -3,17 +3,19 @@ FROM node:20-alpine
 LABEL maintainer="cultivation-game"
 LABEL service="frontend"
 
-RUN apk add --no-cache \
-    git \
-    curl
+RUN apk add --no-cache git curl
 
 WORKDIR /app
 
-COPY package*.json ./
+RUN chown -R node:node /app
 
-RUN if [ -f package.json ]; then npm install; fi
+USER node
 
-COPY . .
+COPY --chown=node:node package*.json ./
+
+RUN npm install
+
+COPY --chown=node:node . .
 
 EXPOSE 3000
 

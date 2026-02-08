@@ -1,4 +1,4 @@
-FROM php:8.4-fpm-alpine
+FROM php:8.4-cli-alpine
 
 ARG UID=1000
 ARG GID=1000
@@ -26,5 +26,7 @@ RUN addgroup -g $GID laravel && \
     adduser -u $UID -G laravel -s /bin/sh -D laravel
 
 WORKDIR /var/www/html
+
+COPY --chown=laravel:laravel . .
 
 USER laravel

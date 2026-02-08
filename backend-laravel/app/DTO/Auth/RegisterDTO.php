@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DTO\Auth;
 
 readonly class RegisterDTO
@@ -11,6 +13,9 @@ readonly class RegisterDTO
         public string $nickname,
     ) {}
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public static function fromRequest(array $data): self
     {
         return new self(
