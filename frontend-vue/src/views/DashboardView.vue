@@ -74,8 +74,8 @@ async function handleLogout() {
     gsap.to('body', {
       duration: 0.5,
       opacity: 0,
-      onComplete: async () => {
-        await authStore.logout()
+      onComplete: () => {
+        void authStore.logout()
       }
     })
   }
@@ -128,7 +128,7 @@ function setupAnimations() {
 
   // Card hover animations
   document.querySelectorAll('.activity-card').forEach(card => {
-    card.addEventListener('mouseenter', function() {
+    card.addEventListener('mouseenter', function(this: HTMLElement) {
       gsap.to(this, {
         duration: 0.3,
         scale: 1.02,
@@ -136,7 +136,7 @@ function setupAnimations() {
       })
     })
 
-    card.addEventListener('mouseleave', function() {
+    card.addEventListener('mouseleave', function(this: HTMLElement) {
       gsap.to(this, {
         duration: 0.3,
         scale: 1,
@@ -147,7 +147,7 @@ function setupAnimations() {
 
   // Technique card animations
   document.querySelectorAll('.technique-card').forEach(card => {
-    card.addEventListener('mouseenter', function() {
+    card.addEventListener('mouseenter', function(this: HTMLElement) {
       gsap.to(this, {
         duration: 0.3,
         y: -10,
@@ -155,7 +155,7 @@ function setupAnimations() {
       })
     })
 
-    card.addEventListener('mouseleave', function() {
+    card.addEventListener('mouseleave', function(this: HTMLElement) {
       gsap.to(this, {
         duration: 0.3,
         y: 0,
