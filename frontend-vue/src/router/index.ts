@@ -27,28 +27,24 @@ const router = createRouter({
 
 let authChecked = false
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _, next) => {
   const authStore = useAuthStore()
 
-  // Проверяем auth только один раз при первой загрузке
   if (!authChecked) {
     await authStore.fetchUser()
     authChecked = true
   }
 
-  // Защищённые страницы
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next('/login')
     return
   }
   
-  // Гостевые страницы (login/register) - если уже залогинен, редирект на главную
   if (to.meta.requiresGuest && authStore.isAuthenticated) {
     next('/')
     return
   }
   
-  // Всё ок, пропускаем
   next()
 })
 
