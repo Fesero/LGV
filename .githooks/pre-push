@@ -11,6 +11,6 @@ echo "pre-push: backend tests (Laravel + Go)…"
 make test-tty
 
 echo "pre-push: frontend build (typecheck via vue-tsc)…"
-make npm-build
+make npm-build-tty
 
 echo "pre-push: OK"
