@@ -8,7 +8,7 @@ EXEC_PHP_TTY = $(COMPOSE) exec -T --user 1000:1000 laravel
 EXEC_GO = $(COMPOSE) exec --user 1000:1000 gameserver
 EXEC_GO_TTY = $(COMPOSE) exec -T --user 1000:1000 gameserver
 EXEC_NODE = $(COMPOSE) exec --user 1000:1000 frontend
-EXEC_NODE_TT = $(COMPOSE) exec -T --user 1000:1000 frontend
+EXEC_NODE_TTY = $(COMPOSE) exec -T --user 1000:1000 frontend
 EXEC_DB = $(COMPOSE) exec --user 1000:1000 postgres
 EXEC_REDIS = $(COMPOSE) exec --user 1000:1000 redis
 
@@ -236,7 +236,7 @@ npm-build: ## Собрать frontend для production
 
 .PHONY: npm-build-tty
 npm-build-tty: ## Собрать frontend для production
-	$(EXEC_NODE-TTY) npm run build
+	$(EXEC_NODE_TTY) npm run build
 
 .PHONY: npm-dev
 npm-dev: ## Запустить dev сервер
