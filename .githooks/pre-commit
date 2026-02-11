@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+STAGED_FILES="$(git diff --cached --name-only --diff-filter=ACM)"
+
+if [[ -z "${STAGED_FILES}" ]]; then
+  exit 0
+fi
+
+need_php=0
+need_go=0
+
+while IFS= read -r f; do
+  [[ "${f}" == backend-laravel/* && "${f}" == *.php ]] && need_php=1
+  [[ "${f}" == backend-go/* && "${f}" == *.go  ]] && need_go=1
+done <<< "${STAGED_FILES}"
+
+if [[ "${need_php}" -eq 1 || "${need_go}" -eq 1 ]]; then
+  if ! docker compose ps >/dev/null 2>&1; then
+    echo "pre-commit: docker compose недоступен или не запущен."
+    echo "Запусти: make up  (или docker compose up -d), затем повтори commit."
+    exit 1
+  fi
+fi
+
+if [[ "${need_php}" -eq 1 ]]; then
+  echo "pre-commit: Pint auto-fix (PHP)…"
+  make composer-install >/dev/null 2>&1 || true
+  make composer cmd="install --no-interaction --prefer-dist" >/dev/null 2>&1 || true
+  make lint-fix >/dev/null 2>&1 || true
+  git add backend-laravel
+fi
+
+if [[ "${need_go}" -eq 1 ]]; then
+  echo "pre-commit: go fmt…"
+  make go-fmt
+  git add backend-go
+fi
+
+echo "pre-commit: OK"

@@ -20,7 +20,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4'
+          php-version: '8.2'
           tools: composer:v2
 
       - name: Install deps
@@ -29,8 +29,8 @@ jobs:
       - name: Tests
         run: composer test
 
-      - name: Pint (format fix)
-        run: ./vendor/bin/pint
+      - name: Pint (format check)
+        run: ./vendor/bin/pint --test
 
       - name: PHPStan (Larastan)
         run: ./vendor/bin/phpstan analyse --memory-limit=1G

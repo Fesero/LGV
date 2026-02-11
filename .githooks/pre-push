@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! docker compose ps >/dev/null 2>&1; then
+  echo "pre-push: docker compose недоступен или не запущен."
+  echo "Запусти: make up"
+  exit 1
+fi
+
+echo "pre-push: backend tests (Laravel + Go)…"
+make test
+
+echo "pre-push: frontend build (typecheck via vue-tsc)…"
+make npm-build
+
+echo "pre-push: OK"
