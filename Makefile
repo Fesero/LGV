@@ -6,6 +6,7 @@ COMPOSE_FILE = docker-compose.yml
 EXEC_PHP = $(COMPOSE) exec --user 1000:1000 laravel
 EXEC_PHP_TTY = $(COMPOSE) exec -T --user 1000:1000 laravel
 EXEC_GO = $(COMPOSE) exec --user 1000:1000 gameserver
+EXEC_GO_TTY = $(COMPOSE) exec -T --user 1000:1000 gameserver
 EXEC_NODE = $(COMPOSE) exec --user 1000:1000 frontend
 EXEC_DB = $(COMPOSE) exec --user 1000:1000 postgres
 EXEC_REDIS = $(COMPOSE) exec --user 1000:1000 redis
@@ -253,7 +254,7 @@ test-tty: ## Запустить все тесты
 	@echo "$(YELLOW)Запуск тестов Laravel...$(NC)"
 	$(EXEC_PHP_TTY) php artisan test
 	@echo "$(YELLOW)Запуск тестов Go...$(NC)"
-	$(EXEC_GO) go test ./...
+	$(EXEC_GO_TTY) go test ./...
 	@echo "$(GREEN)✓ Все тесты пройдены$(NC)"
 
 .PHONY: test-api
