@@ -98,6 +98,9 @@ services:
     depends_on:
       - postgres
       - redis
+    volumes:
+      - go-build-cache:/home/gopher/.cache/go-build
+      - go-mod-cache:/go/pkg/mod
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/health"]
       interval: 30s
@@ -161,3 +164,5 @@ networks:
 volumes:
   postgres_data:
   redis_data:
+  go-build-cache:
+  go-mod-cache:

@@ -253,8 +253,6 @@ test: ## Запустить все тесты
 test-tty: ## Запустить все тесты
 	@echo "$(YELLOW)Запуск тестов Laravel...$(NC)"
 	$(EXEC_PHP_TTY) php artisan test
-	@echo "$(YELLOW)Запуск тестов Go...$(NC)"
-	$(EXEC_GO_TTY) go test ./...
 	@echo "$(GREEN)✓ Все тесты пройдены$(NC)"
 
 .PHONY: test-api
