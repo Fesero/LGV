@@ -8,7 +8,7 @@ if ! docker compose ps >/dev/null 2>&1; then
 fi
 
 echo "pre-push: backend tests (Laravel + Go)…"
-make test
+make test-tty
 
 echo "pre-push: frontend build (typecheck via vue-tsc)…"
 make npm-build
